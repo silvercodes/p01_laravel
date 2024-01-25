@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\SubCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SubCategory>
+ * @extends Factory<SubCategory>
  */
 class SubCategoryFactory extends Factory
 {
@@ -17,7 +19,8 @@ class SubCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->unique()->word(),
+            'category_id' => rand(1, Category::count())
         ];
     }
 }
