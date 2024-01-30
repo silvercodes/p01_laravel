@@ -41,7 +41,7 @@ trait ApiResponser
     ): JsonResponse
     {
         return response()->json([
-            'success' => true,
+            'success' => false,
             'message' => $message,
             'errors' => $errors
         ], $statusCode);
