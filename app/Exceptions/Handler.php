@@ -25,12 +25,6 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-//        $this->renderable(function(Throwable $e) {
-//            dd($e);
-//        });
-
-
-
         $this->renderable(function (NotFoundHttpException $e) {
             throw new ApiNotFoundException();
         });
