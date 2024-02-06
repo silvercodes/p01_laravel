@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,4 +22,8 @@ Route::group(['prefix' => 'categories'], function (){
     Route::patch('/{category}',     [CategoryController::class, 'patch']);
     Route::put('/{category}',       [CategoryController::class, 'put']);
     Route::delete('/{category}',    [CategoryController::class, 'delete']);
+});
+
+Route::group(['prefix' => 'projects'], function() {
+    Route::post('/',                [ProjectController::class, 'create']);
 });
