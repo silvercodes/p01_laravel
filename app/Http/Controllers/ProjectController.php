@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Project\CreateProjectRequest;
-use App\Models\File;
 use App\Models\Project;
 use App\Services\File\FileService;
 use App\Traits\ApiResponser;
@@ -33,5 +32,14 @@ class ProjectController extends Controller
         $project->save();
 
         return $this->successResponse($project->toArray(), null, Response::HTTP_CREATED);
+    }
+    public function delete(Project $project, FileService $fileService)
+    {
+        $fileService->delete($project->avatarFile);
+        $fileService->delete($project->tsFile);
+
+        $project->delete();
+
+        return $this->successResponse([], null, Response::HTTP_NO_CONTENT);
     }
 }

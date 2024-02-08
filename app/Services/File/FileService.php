@@ -34,6 +34,11 @@ class FileService
         return $file;
     }
 
+    public function delete(File $file): bool
+    {
+        return $this->getFileHandler($file->mime_type)->delete($file);
+    }
+
     private function getFileHandler(string $fileType): AbstractFileHandler
     {
         $handlerClass = $this->findHandlerClass($fileType);
