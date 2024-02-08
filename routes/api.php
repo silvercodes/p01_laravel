@@ -25,5 +25,6 @@ Route::group(['prefix' => 'categories'], function (){
 });
 
 Route::group(['prefix' => 'projects'], function() {
+    Route::get('/{project}',        [ProjectController::class, 'get']);
     Route::post('/',                [ProjectController::class, 'create']);
 });

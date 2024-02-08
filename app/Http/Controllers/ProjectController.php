@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 class ProjectController extends Controller
 {
     use ApiResponser;
+    public function get(Project $project)
+    {
+        return $this->successResponse($project->toArray());
+    }
     public function create(CreateProjectRequest $request, FileService $fileService)
     {
         // create Project instance
