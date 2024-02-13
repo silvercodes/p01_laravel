@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * App\Models\Project
@@ -43,6 +44,10 @@ use Illuminate\Support\Carbon;
 class Project extends Model
 {
     use HasFactory;
+
+    const DOWNLOAD_FILE_AVATAR = 'avatar';
+    const DOWNLOAD_FILE_TS = 'ts';
+    const DOWNLOAD_FILE_ZIP = 'zip';
 
     protected $fillable = [
         'type', 'description', 'contacts',
@@ -84,5 +89,10 @@ class Project extends Model
        return  Attribute::make(
             get: fn() => $this->tsFile->url
         );
+    }
+
+    public function getAllFiles(): Collection
+    {
+        return File::whereIn('id', [$this->avatar_file_id, $this->ts_file_id])->get();
     }
 }

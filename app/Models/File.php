@@ -58,4 +58,9 @@ class File extends Model
             }
         );
     }
+
+    public function getAbsolutePath() : string
+    {
+        return Storage::disk()->path($this->path);
+    }
 }

@@ -7,6 +7,8 @@ namespace App\Services\File;
 use App\Exceptions\ApiBadRequestException;
 use App\Models\File;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileService
 {
@@ -37,6 +39,13 @@ class FileService
     public function delete(File $file): bool
     {
         return $this->getFileHandler($file->mime_type)->delete($file);
+    }
+    public function getStream(File $file): ?StreamedResponse
+    {
+        if (Storage::exists($file->path))
+            return Storage::download($file->path, $file->original_name);
+
+        return null;                    // TODO: throw Exception ???
     }
 
     private function getFileHandler(string $fileType): AbstractFileHandler
