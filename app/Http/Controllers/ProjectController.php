@@ -4,25 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Project\CreateProjectRequest;
 use App\Http\Requests\Project\DownloadProjectFileRequest;
+use App\Http\Requests\Project\PatchProjectRequest;
 use App\Models\Project;
 use App\Services\File\FileService;
 use App\Services\Zip\ZipService;
 use App\Traits\ApiResponser;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
 
 class ProjectController extends Controller
 {
     use ApiResponser;
 
+    /**
+     * Default zip-file name
+     */
     const ZIP_FILE_NAME = "Project_files.zip";
-    public function get(Project $project)
+
+    /**
+     * Get the specific project
+     *
+     * @param Project $project
+     * @return JsonResponse
+     */
+    public function get(Project $project): JsonResponse
     {
         return $this->successResponse($project->toArray());
     }
-    public function create(CreateProjectRequest $request, FileService $fileService)
+
+    /**
+     * @param CreateProjectRequest $request
+     * @param FileService $fileService
+     * @return JsonResponse
+     */
+    public function create(CreateProjectRequest $request, FileService $fileService): JsonResponse
     {
         // create Project instance
         $project = new Project($request->validated());
@@ -40,7 +58,13 @@ class ProjectController extends Controller
 
         return $this->successResponse($project->toArray(), null, Response::HTTP_CREATED);
     }
-    public function delete(Project $project, FileService $fileService)
+
+    /**
+     * @param Project $project
+     * @param FileService $fileService
+     * @return JsonResponse
+     */
+    public function delete(Project $project, FileService $fileService): JsonResponse
     {
         $fileService->delete($project->avatarFile);
         $fileService->delete($project->tsFile);
@@ -49,6 +73,44 @@ class ProjectController extends Controller
 
         return $this->successResponse([], null, Response::HTTP_NO_CONTENT);
     }
+
+    /**
+     * @param Project $project
+     * @param PatchProjectRequest $request
+     * @param FileService $fileService
+     * @return JsonResponse
+     */
+    public function patch(
+        Project $project,
+        PatchProjectRequest $request,
+        FileService $fileService
+    ): JsonResponse {
+        $project->fill($request->validated());
+
+        if (isset($request['avatar'])) {
+            $fileService->delete($project->avatarFile);
+            $file = $fileService->save($request['avatar']);
+            $project->avatar_file_id = $file->id;
+        }
+
+        if (isset($request['ts'])) {
+            $fileService->delete($project->tsFile);
+            $file = $fileService->save($request['ts']);
+            $project->ts_file_id = $file->id;
+        }
+
+        $project->save();
+
+        return $this->successResponse([], null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @param Project $project
+     * @param DownloadProjectFileRequest $request
+     * @param FileService $fileService
+     * @param ZipService $zipService
+     * @return BinaryFileResponse|StreamedResponse|null
+     */
     public function download(
         Project $project,
         DownloadProjectFileRequest $request,
@@ -68,6 +130,4 @@ class ProjectController extends Controller
 
         return null;                // TODO: throw Exception ???
     }
-
-
 }

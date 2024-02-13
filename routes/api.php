@@ -28,9 +28,7 @@ Route::group(['prefix' => 'projects'], function() {
     Route::get('/{project}',            [ProjectController::class, 'get']);
     Route::post('/',                    [ProjectController::class, 'create']);
     Route::delete('/{project}',         [ProjectController::class, 'delete']);
+    Route::patch('/{project}',          [ProjectController::class, 'patch']);
 
     Route::get('/{project}/download',   [ProjectController::class, 'download']);
-//    Route::get('/{project}/download', function(\App\Models\Project $id) {
-//        dd($id);
-//    });
 });
